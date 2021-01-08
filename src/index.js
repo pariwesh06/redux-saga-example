@@ -1,17 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+import Counter from './Counter';
+import createSagaMiddleware from "redux-saga";
+import { applyMiddleware, createStore } from 'redux';
+import reducers from "./reducers";
+import sagas from "./sagas";
+const sagaMiddleware = createSagaMiddleware();
+const action = (type) => store.dispatch({ type });
+const store = createStore(reducers, applyMiddleware(sagaMiddleware));
+sagaMiddleware.run(sagas);// after createStore
+function render() {
+  ReactDOM.render(
+    <React.StrictMode>
+      <Counter value={store.getState()} increase={() => action('INCREASE')}></Counter>
+    </React.StrictMode>,
+    document.getElementById('root')
+  );
+}
+render();
+store.subscribe(render)
